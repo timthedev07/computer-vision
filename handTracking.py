@@ -4,8 +4,9 @@ import time
 
 
 def main():
+    filename = "./assets/chain punch.mp4"
     # define capture source
-    cap = cv2.VideoCapture("assets/chain punch.mp4")
+    cap = cv2.VideoCapture(filename)
 
     # get the hands recognition object
     mpHands = mp.solutions.hands
@@ -13,23 +14,27 @@ def main():
 
     frames = []
 
+    if not cap.isOpened():
+        print(f"Failed to open file {filename}")
+        return
+
     while cap.isOpened():
         # read frame
         success, frame = cap.read()
 
         # if success then add frame to the frames array and show it
-        if success:
+        if success == True:
             frames.append(frame)
         else:
             # reached the end
             break
-
     cap.release()
 
-    for frame in frames:
-        print(frame.tolist())
-
     print("Finish reading video")
+
+    for frame in frames:
+        cv2.imshow("Frame", frame)
+        cv2.waitKey(1)
 
 
 if __name__ == "__main__":
