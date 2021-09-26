@@ -42,16 +42,32 @@ class PoseDetector:
         if landmarks:
             if draw:
                 self.mpDraw.draw_landmarks(img, landmarks, self.mpPose.POSE_CONNECTIONS)
-            # for ind, landmark in enumerate(landmarks.landmark):
-            #     h, w, _c = img.shape()
-            #     yPosition, xPosition = int(landmark.x * w), int(landmark.y * h)
-        return img
+            return (img, landmarks.landmark)
+        return (img, [])
 
     def findPoseInFrames(self, frames: list, draw=True):
-        newFrames = []
+        """
+        Returns a list of tuples where `list[i] = (frame, landmarks)`
+        """
+        res = []
         for frame in frames:
-            newFrames.append(self.findPose(frame, draw))
-        return newFrames
+            res.append(self.findPose(frame, draw))
+        return res
+
+    def findLandmarksPositions(self, img, landmarks, draw=True):
+        """
+        Returns a list of tuples where `list[i] = (landmarkId, xPosition, yPosition)`
+        """
+        positions = []
+        if landmarks:
+            for ind, landmark in enumerate(landmarks):
+                h, w, _c = img.shape
+                # now the x and y position are in pixels rather than ratios
+                xPosition, yPosition = int(landmark.x * w), int(landmark.y * h)
+                positions.append([ind, xPosition, yPosition])
+                if draw:
+                    cv2.circle(img, (xPosition, yPosition), 5, (255, 0, 0), cv2.FILLED)
+        return positions
 
 
 def main():
@@ -79,7 +95,10 @@ def main():
     print(colored(f"Finish reading {fileType}", "green"))
 
     detector = PoseDetector()
-    frames = detector.findPoseInFrames(frames, True)
+    poses = detector.findPoseInFrames(frames, True)
+    for pose in poses:
+        frame, landmarks = pose
+        # landmarksPositions = detector.findLandmarksPositions(frame, landmarks)
 
     print(colored("Finish processing pose estimation", "green"))
 
