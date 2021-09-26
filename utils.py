@@ -1,3 +1,6 @@
+import cv2
+
+
 def checkFileType(filename: str) -> str:
 
     images = [
@@ -42,3 +45,32 @@ def checkFileType(filename: str) -> str:
             return "video"
 
     return "other"
+
+
+def readVideo(path: str, getSize=False):
+    """
+    Given a relative path to a video file, read the video and return a list of unprocessed frames.
+    """
+    frames = []
+    # define capture source
+    cap = cv2.VideoCapture(path)
+    frameWidth = int(cap.get(3))
+    frameHeight = int(cap.get(4))
+
+    if not cap.isOpened():
+        print(f"Failed to open file {path}")
+        return
+
+    while cap.isOpened():
+        # read frame
+        success, frame = cap.read()
+
+        # if success then add frame to the frames array
+        if success is True:
+            frames.append(frame)
+        else:
+            # reached the end
+            break
+    cap.release()
+
+    return (frames, (frameWidth, frameHeight)) if getSize else frames
