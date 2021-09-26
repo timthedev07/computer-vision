@@ -1,4 +1,5 @@
 import cv2
+from ffpyplayer.player import MediaPlayer
 
 
 def checkFileType(filename: str) -> str:
@@ -47,19 +48,20 @@ def checkFileType(filename: str) -> str:
     return "other"
 
 
-def readVideo(path: str, getSize=False):
+def readVideo(path: str, getSize=False, withAudio=False):
     """
     Given a relative path to a video file, read the video and return a list of unprocessed frames.
     """
-    frames = []
     # define capture source
     cap = cv2.VideoCapture(path)
-    frameWidth = int(cap.get(3))
-    frameHeight = int(cap.get(4))
 
     if not cap.isOpened():
         print(f"Failed to open file {path}")
-        return
+        return []
+    frames = []
+    frameWidth = int(cap.get(3))
+    frameHeight = int(cap.get(4))
+    player = MediaPlayer(path)
 
     while cap.isOpened():
         # read frame
@@ -68,6 +70,7 @@ def readVideo(path: str, getSize=False):
         # if success then add frame to the frames array
         if success is True:
             frames.append(frame)
+            audio_frame, val = player.get_frame()
         else:
             # reached the end
             break
