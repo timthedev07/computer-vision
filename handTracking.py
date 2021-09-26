@@ -6,7 +6,7 @@ import os
 
 def main():
     """Main function"""
-    filename = "./assets/labrador.jpg"
+    filename = "./assets/hands/labrador.jpg"
     filename = os.path.normpath(filename)
     write = True
 
@@ -71,7 +71,7 @@ def main():
             cv2.waitKey(0)
         return
 
-    outputFilename = f"out/{filename.split(os.sep)[-1]}"
+    outputFilename = f"out/hands/{filename.split(os.sep)[-1]}"
 
     if fileType == "video":
         outputVideo = cv2.VideoWriter(outputFilename, cv2.VideoWriter_fourcc(*"MP4V"), 30, (frameWidth, frameHeight))
