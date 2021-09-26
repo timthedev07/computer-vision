@@ -30,7 +30,7 @@ def main():
         img = cv2.imread(filename)
         frames.append(img)
     else:
-        frames = readVideo(filename)
+        (frames, (frameWidth, frameHeight)) = readVideo(filename, True)
 
     print(f"Finish reading {fileType}")
 
