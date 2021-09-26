@@ -6,7 +6,7 @@ import os
 
 def main():
     """Main function"""
-    filename = "./assets/hand0.jpg"
+    filename = "./assets/labrador.jpg"
     filename = os.path.normpath(filename)
     write = True
 
@@ -21,13 +21,19 @@ def main():
     hands = mpHands.Hands(False, 4, 0.65)
     mpDraw = mp.solutions.drawing_utils
 
+    frameWidth = None
+    frameHeight = None
+
     frames = []
 
     if fileType == "image":
-        frames.append(cv2.imread(filename))
+        img = cv2.imread(filename)
+        frames.append(img)
     else:
         # define capture source
         cap = cv2.VideoCapture(filename)
+        frameWidth = int(cap.get(3))
+        frameHeight = int(cap.get(4))
 
         if not cap.isOpened():
             print(f"Failed to open file {filename}")
@@ -68,7 +74,11 @@ def main():
     outputFilename = f"out/{filename.split(os.sep)[-1]}"
 
     if fileType == "video":
-        pass
+        outputVideo = cv2.VideoWriter(outputFilename, cv2.VideoWriter_fourcc(*"MP4V"), 30, (frameWidth, frameHeight))
+        for frame in frames:
+            outputVideo.write(frame)
+        outputVideo.release()
+
     else:
         if write:
             cv2.imwrite(outputFilename, frames[0])
