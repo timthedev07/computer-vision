@@ -12,3 +12,4 @@ protobuf==3.18.0
 pyparsing==2.4.7
 python-dateutil==2.8.2
 six==1.16.0
+termcolor==1.1.0
