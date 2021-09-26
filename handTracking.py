@@ -1,12 +1,20 @@
 import cv2
 import mediapipe as mp
-import time
+from utils import checkFileType
+import os
 
 
 def main():
-    filename = "./assets/IP MAN 0.mp4"
-    # define capture source
-    cap = cv2.VideoCapture(filename)
+    """Main function"""
+    filename = "./assets/hand0.jpg"
+    filename = os.path.normpath(filename)
+    write = True
+
+    fileType = checkFileType(filename)
+
+    if fileType == "other":
+        print("Unsupported file format")
+        return
 
     # get the hands recognition object
     mpHands = mp.solutions.hands
@@ -15,25 +23,29 @@ def main():
 
     frames = []
 
-    if not cap.isOpened():
-        print(f"Failed to open file {filename}")
-        return
+    if fileType == "image":
+        frames.append(cv2.imread(filename))
+    else:
+        # define capture source
+        cap = cv2.VideoCapture(filename)
 
-    while cap.isOpened():
-        # read frame
-        success, frame = cap.read()
+        if not cap.isOpened():
+            print(f"Failed to open file {filename}")
+            return
 
-        # if success then add frame to the frames array and show it
-        if success == True:
-            frames.append(frame)
-        else:
-            # reached the end
-            break
-    cap.release()
+        while cap.isOpened():
+            # read frame
+            success, frame = cap.read()
 
-    print("Finish reading video")
+            # if success then add frame to the frames array and show it
+            if success is True:
+                frames.append(frame)
+            else:
+                # reached the end
+                break
+        cap.release()
 
-    result = []
+    print(f"Finish reading {fileType}")
 
     for frame in frames:
         currResult = hands.process(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
@@ -43,9 +55,25 @@ def main():
 
     print("Finish processing hand detection")
 
-    for frame in frames:
-        cv2.imshow("Frame", frame)
-        cv2.waitKey(1)
+    if not write:
+        if fileType == "video":
+            for frame in frames:
+                cv2.imshow("Frame", frame)
+                cv2.waitKey(1)
+        else:
+            cv2.imshow("Frame", frames[0])
+            cv2.waitKey(0)
+        return
+
+    outputFilename = f"out/{filename.split(os.sep)[-1]}"
+
+    if fileType == "video":
+        pass
+    else:
+        if write:
+            cv2.imwrite(outputFilename, frames[0])
+
+    print(f"Output written to {outputFilename}")
 
 
 if __name__ == "__main__":
