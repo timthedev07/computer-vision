@@ -13,7 +13,7 @@ def main():
     fileType = checkFileType(filename)
 
     if fileType == "other":
-        print("Unsupported file format")
+        print(colored("Unsupported file format", "red"))
         return
 
     # get the hands recognition object
@@ -39,6 +39,9 @@ def main():
         landmarks = currResult.pose_landmarks
         if landmarks:
             mpDraw.draw_landmarks(frame, landmarks, mpPose.POSE_CONNECTIONS)
+            for ind, landmark in enumerate(landmarks.landmark):
+                h, w, _c = frame.shape()
+                yPosition, xPosition = int(landmark.x * w), int(landmark.y * h)
 
     print(colored("Finish processing pose estimation", "green"))
 
