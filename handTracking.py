@@ -1,12 +1,12 @@
 import cv2
 import mediapipe as mp
-from utils import checkFileType
+from utils import checkFileType, readVideo
 import os
 
 
 def main():
     """Main function"""
-    filename = "./assets/labrador.jpg"
+    filename = "./assets/IP MAN 0.mp4"
     filename = os.path.normpath(filename)
     write = True
 
@@ -30,26 +30,7 @@ def main():
         img = cv2.imread(filename)
         frames.append(img)
     else:
-        # define capture source
-        cap = cv2.VideoCapture(filename)
-        frameWidth = int(cap.get(3))
-        frameHeight = int(cap.get(4))
-
-        if not cap.isOpened():
-            print(f"Failed to open file {filename}")
-            return
-
-        while cap.isOpened():
-            # read frame
-            success, frame = cap.read()
-
-            # if success then add frame to the frames array and show it
-            if success is True:
-                frames.append(frame)
-            else:
-                # reached the end
-                break
-        cap.release()
+        frames = readVideo(filename)
 
     print(f"Finish reading {fileType}")
 
