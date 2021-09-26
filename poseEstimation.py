@@ -5,8 +5,57 @@ from utils import checkFileType, readVideo
 from termcolor import colored
 
 
+class PoseDetector:
+    def __init__(
+        self,
+        staticImageMode=False,
+        modelComplexity=1,
+        smoothLandmarks=True,
+        enableSegmentation=False,
+        smoothSegmentation=True,
+        minDetectionConfidence=0.5,
+        minTrackingConfidence=0.5,
+    ):
+        self.staticImageMode = staticImageMode
+        self.modelComplexity = modelComplexity
+        self.smoothLandmarks = smoothLandmarks
+        self.enableSegmentation = enableSegmentation
+        self.smoothSegmentation = smoothSegmentation
+        self.minDetectionConfidence = minDetectionConfidence
+        self.minTrackingConfidence = minTrackingConfidence
+        # get the hands recognition object
+        self.mpPose = mp.solutions.pose
+        self.pose = self.mpPose.Pose(
+            staticImageMode,
+            modelComplexity,
+            smoothLandmarks,
+            enableSegmentation,
+            smoothSegmentation,
+            minDetectionConfidence,
+            minTrackingConfidence,
+        )
+        self.mpDraw = mp.solutions.drawing_utils
+
+    def findPose(self, img, draw=True):
+        currResult = self.pose.process(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+        landmarks = currResult.pose_landmarks
+        if landmarks:
+            if draw:
+                self.mpDraw.draw_landmarks(img, landmarks, self.mpPose.POSE_CONNECTIONS)
+            # for ind, landmark in enumerate(landmarks.landmark):
+            #     h, w, _c = img.shape()
+            #     yPosition, xPosition = int(landmark.x * w), int(landmark.y * h)
+        return img
+
+    def findPoseInFrames(self, frames: list, draw=True):
+        newFrames = []
+        for frame in frames:
+            newFrames.append(self.findPose(frame, draw))
+        return newFrames
+
+
 def main():
-    filename = "./assets/IpVsWan0.mp4"
+    filename = "./assets/chain punch.mp4"
     filename = os.path.normpath(filename)
     write = True
 
@@ -15,11 +64,6 @@ def main():
     if fileType == "other":
         print(colored("Unsupported file format", "red"))
         return
-
-    # get the hands recognition object
-    mpPose = mp.solutions.pose
-    pose = mpPose.Pose()
-    mpDraw = mp.solutions.drawing_utils
 
     frameWidth = None
     frameHeight = None
@@ -34,14 +78,8 @@ def main():
 
     print(colored(f"Finish reading {fileType}", "green"))
 
-    for frame in frames:
-        currResult = pose.process(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
-        landmarks = currResult.pose_landmarks
-        if landmarks:
-            mpDraw.draw_landmarks(frame, landmarks, mpPose.POSE_CONNECTIONS)
-            for ind, landmark in enumerate(landmarks.landmark):
-                h, w, _c = frame.shape()
-                yPosition, xPosition = int(landmark.x * w), int(landmark.y * h)
+    detector = PoseDetector()
+    frames = detector.findPoseInFrames(frames, True)
 
     print(colored("Finish processing pose estimation", "green"))
 
