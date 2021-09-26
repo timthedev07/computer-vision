@@ -6,7 +6,7 @@ import os
 
 def main():
     """Main function"""
-    filename = "./assets/hands/labrador.jpg"
+    filename = "./assets/labrador.jpg"
     filename = os.path.normpath(filename)
     write = True
 
