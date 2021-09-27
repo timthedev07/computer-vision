@@ -1,4 +1,5 @@
 import cv2
+import ffmpeg
 
 
 def checkFileType(filename: str) -> str:
@@ -50,6 +51,8 @@ def checkFileType(filename: str) -> str:
 def readVideo(path: str, getSize=False, withAudio=False):
     """
     Given a relative path to a video file, read the video and return a list of unprocessed frames.
+    to determine the output variable `video` based on the withAudio parameter, if it is true, then the `video` variable would contain a tuple with (a list of frames, a ffmpeg audio)
+    and finally `if getSize == true` then its return value would be like `(video, (frameWidth, frameHeight))` and `video` otherwise
     """
     # define capture source
     cap = cv2.VideoCapture(path)
@@ -60,6 +63,7 @@ def readVideo(path: str, getSize=False, withAudio=False):
     frames = []
     frameWidth = int(cap.get(3))
     frameHeight = int(cap.get(4))
+    audio = ffmpeg.input(path)
 
     while cap.isOpened():
         # read frame
@@ -73,4 +77,6 @@ def readVideo(path: str, getSize=False, withAudio=False):
             break
     cap.release()
 
-    return (frames, (frameWidth, frameHeight)) if getSize else frames
+    video = (frames, audio) if withAudio else frames
+
+    return (video, (frameWidth, frameHeight)) if getSize else video
