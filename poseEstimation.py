@@ -124,7 +124,7 @@ def main():
         processedFfmpegVideo = ffmpeg.input(outputFilename)
 
         ffmpeg.concat(processedFfmpegVideo, audio, v=1, a=1).output(outputFilename.replace("buffer-", "", 1)).run()
-        os.remove(outputVideo)
+        os.remove(outputFilename)
 
     else:
         if write:
