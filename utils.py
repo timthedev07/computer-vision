@@ -1,5 +1,4 @@
 import cv2
-from ffpyplayer.player import MediaPlayer
 
 
 def checkFileType(filename: str) -> str:
@@ -61,7 +60,6 @@ def readVideo(path: str, getSize=False, withAudio=False):
     frames = []
     frameWidth = int(cap.get(3))
     frameHeight = int(cap.get(4))
-    player = MediaPlayer(path)
 
     while cap.isOpened():
         # read frame
@@ -70,7 +68,6 @@ def readVideo(path: str, getSize=False, withAudio=False):
         # if success then add frame to the frames array
         if success is True:
             frames.append(frame)
-            audio_frame, val = player.get_frame()
         else:
             # reached the end
             break
