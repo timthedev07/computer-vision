@@ -113,7 +113,7 @@ def main():
             cv2.waitKey(0)
         return
 
-    outputFilename = f"out/pose/{filename.split(os.sep)[-1]}"
+    outputFilename = f"out/pose/buffer-{filename.split(os.sep)[-1]}"
 
     if fileType == "video":
         outputVideo = cv2.VideoWriter(outputFilename, cv2.VideoWriter_fourcc(*"MP4V"), 30, (frameWidth, frameHeight))
@@ -123,7 +123,8 @@ def main():
 
         processedFfmpegVideo = ffmpeg.input(outputFilename)
 
-        ffmpeg.concat(processedFfmpegVideo, audio, v=1, a=1).output(outputFilename).run()
+        ffmpeg.concat(processedFfmpegVideo, audio, v=1, a=1).output(outputFilename.replace("buffer-", "", 1)).run()
+        os.remove(outputVideo)
 
     else:
         if write:
