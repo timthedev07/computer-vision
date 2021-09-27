@@ -3,6 +3,7 @@ import mediapipe as mp
 import os
 from utils import checkFileType, readVideo
 from termcolor import colored
+import ffmpeg
 
 
 class PoseDetector:
@@ -90,7 +91,7 @@ def main():
         img = cv2.imread(filename)
         frames.append(img)
     else:
-        (frames, (frameWidth, frameHeight)) = readVideo(filename, True)
+        ((frames, audio), (frameWidth, frameHeight)) = readVideo(filename, True, True)
 
     print(colored(f"Finish reading {fileType}", "green"))
 
@@ -119,6 +120,10 @@ def main():
         for frame in frames:
             outputVideo.write(frame)
         outputVideo.release()
+
+        processedFfmpegVideo = ffmpeg.input(outputFilename)
+
+        ffmpeg.concat(processedFfmpegVideo, audio, v=1, a=1).output(outputFilename).run()
 
     else:
         if write:
