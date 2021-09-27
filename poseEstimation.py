@@ -72,7 +72,7 @@ class PoseDetector:
 
 
 def main():
-    filename = "./assets/chain punch.mp4"
+    filename = "./assets/IpVsWan0.mp4"
     filename = os.path.normpath(filename)
     write = True
 
