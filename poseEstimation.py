@@ -99,7 +99,8 @@ def main():
     poses = detector.findPoseInFrames(frames, True)
     for pose in poses:
         frame, landmarks = pose
-        # landmarksPositions = detector.findLandmarksPositions(frame, landmarks)
+        landmarksPositions = detector.findLandmarksPositions(frame, landmarks)
+        print(landmarksPositions if 1 < 1 else "")
 
     print(colored("Finish processing pose estimation", "green"))
 
