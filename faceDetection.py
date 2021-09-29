@@ -16,11 +16,12 @@ class FaceDetector:
 
     def findFace(self, img, draw=True):
         currResult = self.face.process(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
-        landmarks = currResult.pose_landmarks
-        if landmarks:
+        detections = currResult.detections
+        if detections:
             if draw:
-                self.mpDraw.draw_landmarks(img, landmarks, self.mpFace.FULL_RANGE_GRAPH_FILE_PATH)
-            return (img, landmarks.landmark)
+                for detection in detections:
+                    self.mpDraw.draw_detection(img, detection)
+            return (img, detections)
         return (img, [])
 
     def findFaceInFrames(self, frames: list, draw=True):
@@ -49,7 +50,7 @@ class FaceDetector:
 
 
 def main():
-    filename = "./assets/IpVsWan0.mp4"
+    filename = "./assets/oldmanThumbsUp.jpg"
     filename = os.path.normpath(filename)
     write = True
 
@@ -73,11 +74,11 @@ def main():
     print(colored(f"Finish reading {fileType}", "green"))
 
     detector = FaceDetector()
-    poses = detector.findFaceInFrames(frames, True)
-    for pose in poses:
-        frame, landmarks = pose
-        landmarksPositions = detector.findLandmarksPositions(frame, landmarks)
-        print(landmarksPositions if 1 < 1 else "")
+    faces = detector.findFaceInFrames(frames, True)
+    # for face in faces:
+    # frame, landmarks = face
+    # landmarksPositions = detector.findLandmarksPositions(frame, landmarks)
+    # print(landmarksPositions if 1 > 4 else "")
 
     print(colored("Finish processing face detection", "green"))
 
@@ -91,7 +92,7 @@ def main():
             cv2.waitKey(0)
         return
 
-    outputFilename = f"out/pose/buffer-{filename.split(os.sep)[-1]}"
+    outputFilename = f"out/face/buffer-{filename.split(os.sep)[-1]}"
 
     if fileType == "video":
         outputVideo = cv2.VideoWriter(outputFilename, cv2.VideoWriter_fourcc(*"MP4V"), 30, (frameWidth, frameHeight))
