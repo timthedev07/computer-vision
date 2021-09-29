@@ -7,30 +7,15 @@ import ffmpeg
 
 
 class FaceDetector:
-    def __init__(
-        self,
-        staticImageMode=False,
-        modelComplexity=1,
-        smoothLandmarks=True,
-        enableSegmentation=False,
-        smoothSegmentation=True,
-        minDetectionConfidence=0.5,
-        minTrackingConfidence=0.5,
-    ):
-        self.staticImageMode = staticImageMode
-        self.modelComplexity = modelComplexity
-        self.smoothLandmarks = smoothLandmarks
-        self.enableSegmentation = enableSegmentation
-        self.smoothSegmentation = smoothSegmentation
-        self.minDetectionConfidence = minDetectionConfidence
-        self.minTrackingConfidence = minTrackingConfidence
-        # get the hands recognition object
+    def __init__(self, min_detection_confidence=0.5, model_selection=0):
+        self.min_detection_confidence = min_detection_confidence
+        self.model_selection = model_selection
         self.mpFace = mp.solutions.face_detection
-        self.pose = self.mpFace.FaceDetection()
+        self.face = self.mpFace.FaceDetection()
         self.mpDraw = mp.solutions.drawing_utils
 
     def findFace(self, img, draw=True):
-        currResult = self.pose.process(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+        currResult = self.face.process(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
         landmarks = currResult.pose_landmarks
         if landmarks:
             if draw:
