@@ -24,7 +24,6 @@ class PoseDetector:
         self.smoothSegmentation = smoothSegmentation
         self.minDetectionConfidence = minDetectionConfidence
         self.minTrackingConfidence = minTrackingConfidence
-        # get the hands recognition object
         self.mpPose = mp.solutions.pose
         self.pose = self.mpPose.Pose(
             staticImageMode,
