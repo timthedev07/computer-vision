@@ -5,6 +5,8 @@ from utils import checkFileType, readVideo
 from termcolor import colored
 import ffmpeg
 
+ANNOTATION_COLOR = (0, 231, 234)
+
 
 class FaceDetector:
     def __init__(self, min_detection_confidence=0.5, model_selection=0):
@@ -29,7 +31,16 @@ class FaceDetector:
                         int(bboxC.width * imageW),
                         int(bboxC.height * imageH),
                     )
-                    cv2.rectangle(img, boundingBox, (255, 0, 255), 2)
+                    cv2.rectangle(img, boundingBox, ANNOTATION_COLOR, 2)
+                    cv2.putText(
+                        img,
+                        f"{int(detection.score[0] * 100)}%",
+                        (boundingBox[0], boundingBox[1] - 20),
+                        cv2.FONT_HERSHEY_PLAIN,
+                        3,
+                        ANNOTATION_COLOR,
+                        2,
+                    )
             return (img, detections)
         return (img, [])
 
@@ -101,9 +112,8 @@ def main():
             cv2.waitKey(0)
         return
 
-    outputFilename = f"out/face/buffer-{filename.split(os.sep)[-1]}"
-
     if fileType == "video":
+        outputFilename = f"out/face/buffer-{filename.split(os.sep)[-1]}"
         outputVideo = cv2.VideoWriter(outputFilename, cv2.VideoWriter_fourcc(*"MP4V"), 30, (frameWidth, frameHeight))
         for frame in frames:
             outputVideo.write(frame)
@@ -115,6 +125,7 @@ def main():
         os.remove(outputFilename)
 
     else:
+        outputFilename = f"out/face/{filename.split(os.sep)[-1]}"
         if write:
             cv2.imwrite(outputFilename, frames[0])
 
