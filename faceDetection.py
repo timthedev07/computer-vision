@@ -20,7 +20,16 @@ class FaceDetector:
         if detections:
             if draw:
                 for detection in detections:
-                    self.mpDraw.draw_detection(img, detection)
+                    # self.mpDraw.draw_detection(img, detection)
+                    bboxC = detection.location_data.relative_bounding_box
+                    imageH, imageW, _trash = img.shape
+                    boundingBox = (
+                        int(bboxC.xmin * imageW),
+                        int(bboxC.ymin * imageH),
+                        int(bboxC.width * imageW),
+                        int(bboxC.height * imageH),
+                    )
+                    cv2.rectangle(img, boundingBox, (255, 0, 255), 2)
             return (img, detections)
         return (img, [])
 
@@ -73,7 +82,7 @@ def main():
 
     print(colored(f"Finish reading {fileType}", "green"))
 
-    detector = FaceDetector()
+    detector = FaceDetector(0.75)
     faces = detector.findFaceInFrames(frames, True)
     # for face in faces:
     # frame, landmarks = face
