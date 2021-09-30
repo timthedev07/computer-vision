@@ -37,7 +37,7 @@ class FaceDetector:
                         f"{int(detection.score[0] * 100)}%",
                         (boundingBox[0], boundingBox[1] - 20),
                         cv2.FONT_HERSHEY_PLAIN,
-                        3,
+                        2,
                         ANNOTATION_COLOR,
                         2,
                     )
