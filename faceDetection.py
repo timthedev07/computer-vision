@@ -5,7 +5,7 @@ from utils import checkFileType, readVideo
 from termcolor import colored
 import ffmpeg
 
-ANNOTATION_COLOR = (24, 155, 157)
+ANNOTATION_COLOR = (157, 155, 24)
 
 
 class FaceDetector:
