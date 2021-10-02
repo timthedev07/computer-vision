@@ -50,7 +50,7 @@ class HandDetector:
             res.append(self.findHands(frame, draw))
         return res
 
-    def highlightLandmark(self, img, hands, landmarkId, circleRadius=10):
+    def highlightLandmark(self, img, hands, landmarkId, circleRadius=12):
         """Given a list of hands, highlight the landmark where `landmark.id = landmarkId` across all hands.
 
         Args:
