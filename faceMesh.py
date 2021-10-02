@@ -23,7 +23,7 @@ class FaceMeshDetector:
         if multiFacelandmarks:
             for faceLandmarks in multiFacelandmarks:
                 if draw:
-                    self.mpDraw.draw_landmarks(img, faceLandmarks, self.mpFaceMesh.FACEMESH_TESSELATION, self.drawSpec)
+                    self.mpDraw.draw_landmarks(img, faceLandmarks, self.mpFaceMesh.FACEMESH_CONTOURS, self.drawSpec)
                 for ind, landmark in enumerate(faceLandmarks.landmark):
                     imageH, imageW, _ = img.shape
                     x, y = int(landmark.x * imageW), int(landmark.y * imageH)
