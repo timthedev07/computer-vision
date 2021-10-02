@@ -55,21 +55,6 @@ class FaceDetector:
             res.append(self.findFace(frame, draw))
         return res
 
-    def findLandmarksPositions(self, img, landmarks, draw=True):
-        """
-        Returns a list of tuples where `list[i] = (landmarkId, xPosition, yPosition)`
-        """
-        positions = []
-        if landmarks:
-            for ind, landmark in enumerate(landmarks):
-                h, w, _c = img.shape
-                # now the x and y position are in pixels rather than ratios
-                xPosition, yPosition = int(landmark.x * w), int(landmark.y * h)
-                positions.append([ind, xPosition, yPosition])
-                if draw:
-                    cv2.circle(img, (xPosition, yPosition), 5, (255, 0, 0), cv2.FILLED)
-        return positions
-
 
 def main():
     filename = "./assets/IpMan4Faces0.mp4"
@@ -96,11 +81,7 @@ def main():
     print(colored(f"Finish reading {fileType}", "green"))
 
     detector = FaceDetector(0.75)
-    faces = detector.findFaceInFrames(frames, True)
-    # for face in faces:
-    # frame, landmarks = face
-    # landmarksPositions = detector.findLandmarksPositions(frame, landmarks)
-    # print(landmarksPositions if 1 > 4 else "")
+    detector.findFaceInFrames(frames, True)
 
     print(colored("Finish processing face detection", "green"))
 
