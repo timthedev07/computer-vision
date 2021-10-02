@@ -19,18 +19,22 @@ class FaceDetector:
     def findFace(self, img, draw=True):
         currResult = self.face.process(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
         detections = currResult.detections
+        boundingBoxes = []
         if detections:
-            if draw:
-                for detection in detections:
-                    # self.mpDraw.draw_detection(img, detection)
-                    bboxC = detection.location_data.relative_bounding_box
-                    imageH, imageW, _trash = img.shape
-                    boundingBox = (
-                        int(bboxC.xmin * imageW),
-                        int(bboxC.ymin * imageH),
-                        int(bboxC.width * imageW),
-                        int(bboxC.height * imageH),
-                    )
+            for ind, detection in enumerate(detections):
+                # self.mpDraw.draw_detection(img, detection)
+                bboxC = detection.location_data.relative_bounding_box
+                imageH, imageW, _trash = img.shape
+                boundingBox = (
+                    int(bboxC.xmin * imageW),
+                    int(bboxC.ymin * imageH),
+                    int(bboxC.width * imageW),
+                    int(bboxC.height * imageH),
+                )
+
+                # a tuple containing (id, boundingBox, detectionScore)
+                boundingBoxes.append((ind, boundingBox, detection.score))
+                if draw:
                     cv2.rectangle(img, boundingBox, ANNOTATION_COLOR, 2)
                     cv2.putText(
                         img,
@@ -41,8 +45,7 @@ class FaceDetector:
                         ANNOTATION_COLOR,
                         2,
                     )
-            return (img, detections)
-        return (img, [])
+        return (img, boundingBoxes)
 
     def findFaceInFrames(self, frames: list, draw=True):
         """
