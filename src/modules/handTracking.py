@@ -6,6 +6,7 @@ from termcolor import colored
 import ffmpeg
 
 ANNOTATION_COLOR = (26, 246, 0)
+EMPHASIS_COLOR = (26, 0, 246)
 
 
 class HandDetector:
@@ -68,7 +69,7 @@ class HandDetector:
         if x is None or y is None:
             raise ValueError("")
 
-        cv2.circle(img, (x, y), 15, ANNOTATION_COLOR, cv2.FILLED)
+        cv2.circle(img, (x, y), 15, EMPHASIS_COLOR, cv2.FILLED)
 
         return img
 
