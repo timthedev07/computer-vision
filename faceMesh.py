@@ -5,7 +5,7 @@ from utils import checkFileType, readVideo
 from termcolor import colored
 import ffmpeg
 
-ANNOTATION_COLOR = (157, 155, 24)
+ANNOTATION_COLOR = (26, 246, 0)
 
 
 class FaceMeshDetector:
@@ -15,7 +15,7 @@ class FaceMeshDetector:
             staticImageMode, maxNumFaces, minDetectionConfidence, minTrackingConfidence
         )
         self.mpDraw = mp.solutions.drawing_utils
-        self.drawSpec = self.mpDraw.DrawingSpec(thickness=1, circle_radius=2)
+        self.drawSpec = self.mpDraw.DrawingSpec(thickness=1, circle_radius=2, color=ANNOTATION_COLOR)
 
     def findFaceMesh(self, img, draw=True):
         currResult = self.face.process(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
