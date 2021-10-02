@@ -57,7 +57,7 @@ class FaceDetector:
 
 
 def main():
-    filename = "./assets/techPeople0.jpg"
+    filename = "./assets/techPeople1.png"
     filename = os.path.normpath(filename)
     write = True
 
@@ -80,7 +80,7 @@ def main():
 
     print(colored(f"Finish reading {fileType}", "green"))
 
-    detector = FaceDetector()
+    detector = FaceDetector(0.3)
     detector.findFaceInFrames(frames, True)
 
     print(colored("Finish processing face detection", "green"))
