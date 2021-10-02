@@ -13,7 +13,7 @@ class FaceDetector:
         self.min_detection_confidence = min_detection_confidence
         self.model_selection = model_selection
         self.mpFace = mp.solutions.face_detection
-        self.face = self.mpFace.FaceDetection()
+        self.face = self.mpFace.FaceDetection(min_detection_confidence, model_selection)
         self.mpDraw = mp.solutions.drawing_utils
 
     def findFace(self, img, draw=True):
@@ -22,7 +22,6 @@ class FaceDetector:
         boundingBoxes = []
         if detections:
             for ind, detection in enumerate(detections):
-                # self.mpDraw.draw_detection(img, detection)
                 bboxC = detection.location_data.relative_bounding_box
                 imageH, imageW, _trash = img.shape
                 boundingBox = (
