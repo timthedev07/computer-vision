@@ -18,15 +18,23 @@ class FaceMeshDetector:
         self.drawSpec = self.mpDraw.DrawingSpec(thickness=1, circle_radius=1, color=ANNOTATION_COLOR)
 
     def findFaceMesh(self, img, draw=True):
+        """
+        Returns tuple consisting of (frame, landmarks)
+        """
         currResult = self.face.process(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
         multiFacelandmarks = currResult.multi_face_landmarks
+        faces = []
         if multiFacelandmarks:
             for faceLandmarks in multiFacelandmarks:
                 if draw:
                     self.mpDraw.draw_landmarks(img, faceLandmarks, self.mpFaceMesh.FACEMESH_CONTOURS, self.drawSpec)
+                face = []
                 for ind, landmark in enumerate(faceLandmarks.landmark):
                     imageH, imageW, _ = img.shape
                     x, y = int(landmark.x * imageW), int(landmark.y * imageH)
+                    face.append((ind, x, y))
+                faces.append(tuple(face))
+        return (img, faces)
 
     def findFaceMeshInFrames(self, frames: list, draw=True):
         """
@@ -36,29 +44,6 @@ class FaceMeshDetector:
         for frame in frames:
             res.append(self.findFaceMesh(frame, draw))
         return res
-
-    def customDraw(self, img, boundingBox, cornerMarkerLength=30, cornerMarkerThickness=10, rectangleThickness=1):
-        xStart, yStart, w, h = boundingBox
-        xEnd, yEnd = xStart + w, yStart + h
-
-        cv2.rectangle(img, boundingBox, ANNOTATION_COLOR, rectangleThickness)
-        # top left corner
-        cv2.line(img, (xStart, yStart), (xStart + cornerMarkerLength, yStart), ANNOTATION_COLOR, cornerMarkerThickness)
-        cv2.line(img, (xStart, yStart), (xStart, yStart + cornerMarkerLength), ANNOTATION_COLOR, cornerMarkerThickness)
-
-        # top right corner
-        cv2.line(img, (xEnd, yStart), (xEnd - cornerMarkerLength, yStart), ANNOTATION_COLOR, cornerMarkerThickness)
-        cv2.line(img, (xEnd, yStart), (xEnd, yStart + cornerMarkerLength), ANNOTATION_COLOR, cornerMarkerThickness)
-
-        # bottom right corner
-        cv2.line(img, (xEnd, yEnd), (xEnd - cornerMarkerLength, yEnd), ANNOTATION_COLOR, cornerMarkerThickness)
-        cv2.line(img, (xEnd, yEnd), (xEnd, yEnd - cornerMarkerLength), ANNOTATION_COLOR, cornerMarkerThickness)
-
-        # bottom left corner
-        cv2.line(img, (xStart, yEnd), (xStart + cornerMarkerLength, yEnd), ANNOTATION_COLOR, cornerMarkerThickness)
-        cv2.line(img, (xStart, yEnd), (xStart, yEnd - cornerMarkerLength), ANNOTATION_COLOR, cornerMarkerThickness)
-
-        return img
 
 
 def main():
