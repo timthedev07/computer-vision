@@ -67,9 +67,36 @@ class HandDetector:
                     break
 
         if x is None or y is None:
-            raise ValueError("")
+            raise ValueError("Invalid landmark id")
 
         cv2.circle(img, (x, y), circleRadius, EMPHASIS_COLOR, cv2.FILLED)
+
+        return img
+
+    def connectLandmarks(self, img, hands, landmarkAId, landmarkBId, thickness=4):
+        """Given a list of hands, highlight the landmark where `landmark.id = landmarkId` across all hands.
+
+        Args:
+            img: cv2 img
+            hands (List[List[Tuple[int, int]]]): A list of hands
+            landmarkId ([type]): [description]
+        """
+        x1, y1 = None, None
+        x2, y2 = None, None
+
+        for hand in hands:
+            for ind, currX, currY in hand:
+                if ind == landmarkAId:
+                    x1, y1 = currX, currY
+                elif ind == landmarkBId:
+                    x2, y2 = currX, currY
+
+        if x1 is None or y1 is None:
+            raise ValueError("Id of landmark A is invalid")
+        if x2 is None or y2 is None:
+            raise ValueError("Id of landmark B is invalid")
+
+        cv2.line(img, (x1, y2), (x2, y2), EMPHASIS_COLOR, thickness)
 
         return img
 
