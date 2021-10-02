@@ -9,42 +9,20 @@ ANNOTATION_COLOR = (157, 155, 24)
 
 
 class FaceMeshDetector:
-    def __init__(self, min_detection_confidence=0.5, model_selection=0):
-        self.min_detection_confidence = min_detection_confidence
-        self.model_selection = model_selection
-        self.mpFace = mp.solutions.face_detection
-        self.face = self.mpFace.FaceDetection(min_detection_confidence, model_selection)
+    def __init__(self, staticImageMode=False, maxNumFaces=3, minDetectionConfidence=0.5, minTrackingConfidence=0.5):
+        self.mpFaceMesh = mp.solutions.face_mesh
+        self.face = self.mpFaceMesh.FaceMesh(
+            staticImageMode, maxNumFaces, minDetectionConfidence, minTrackingConfidence
+        )
         self.mpDraw = mp.solutions.drawing_utils
+        self.drawSpec = self.mpDraw.DrawingSpec(thickness=1, circle_radius=2)
 
     def findFaceMesh(self, img, draw=True):
         currResult = self.face.process(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
-        detections = currResult.detections
-        boundingBoxes = []
-        if detections:
-            for ind, detection in enumerate(detections):
-                bboxC = detection.location_data.relative_bounding_box
-                imageH, imageW, _trash = img.shape
-                boundingBox = (
-                    int(bboxC.xmin * imageW),
-                    int(bboxC.ymin * imageH),
-                    int(bboxC.width * imageW),
-                    int(bboxC.height * imageH),
-                )
-
-                # a tuple containing (id, boundingBox, detectionScore)
-                boundingBoxes.append((ind, boundingBox, detection.score))
-                if draw:
-                    img = self.customDraw(img, boundingBox)
-                    cv2.putText(
-                        img,
-                        f"{int(detection.score[0] * 100)}%",
-                        (boundingBox[0], boundingBox[1] - 20),
-                        cv2.FONT_HERSHEY_PLAIN,
-                        2,
-                        ANNOTATION_COLOR,
-                        2,
-                    )
-        return (img, boundingBoxes)
+        multiFacelandmarks = currResult.multi_face_landmarks
+        if multiFacelandmarks:
+            for faceLandmarks in multiFacelandmarks:
+                self.mpDraw.draw_landmarks(img, faceLandmarks, self.mpFaceMesh.FACEMESH_TESSELATION, self.drawSpec)
 
     def findFaceMeshInFrames(self, frames: list, draw=True):
         """
@@ -119,8 +97,8 @@ def main():
         return
 
     if fileType == "video":
-        outputFilename = f"out/face/{filename.split(os.sep)[-1]}"
-        bufferOutputFilename = f"out/face/buffer-{filename.split(os.sep)[-1]}"
+        outputFilename = f"out/faceMesh/{filename.split(os.sep)[-1]}"
+        bufferOutputFilename = f"out/faceMesh/buffer-{filename.split(os.sep)[-1]}"
         outputVideo = cv2.VideoWriter(
             bufferOutputFilename, cv2.VideoWriter_fourcc(*"MP4V"), fps, (frameWidth, frameHeight)
         )
@@ -135,7 +113,7 @@ def main():
         os.remove(bufferOutputFilename)
 
     else:
-        outputFilename = f"out/face/{filename.split(os.sep)[-1]}"
+        outputFilename = f"out/faceMesh/{filename.split(os.sep)[-1]}"
         if write:
             cv2.imwrite(outputFilename, frames[0])
     outputFilename = outputFilename.replace("buffer-", "")
