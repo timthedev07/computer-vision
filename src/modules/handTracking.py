@@ -50,7 +50,7 @@ class HandDetector:
             res.append(self.findHands(frame, draw))
         return res
 
-    def highlightLandmark(self, img, hands, landmarkId):
+    def highlightLandmark(self, img, hands, landmarkId, circleRadius=10):
         """Given a list of hands, highlight the landmark where `landmark.id = landmarkId` across all hands.
 
         Args:
@@ -69,7 +69,7 @@ class HandDetector:
         if x is None or y is None:
             raise ValueError("")
 
-        cv2.circle(img, (x, y), 15, EMPHASIS_COLOR, cv2.FILLED)
+        cv2.circle(img, (x, y), 15, circleRadius, cv2.FILLED)
 
         return img
 
