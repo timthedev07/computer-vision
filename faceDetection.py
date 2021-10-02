@@ -55,11 +55,11 @@ class FaceDetector:
             res.append(self.findFace(frame, draw))
         return res
 
-    def customDraw(self, img, boundingBox, cornerMarkerLength=30, cornerMarkerThickness=10):
+    def customDraw(self, img, boundingBox, cornerMarkerLength=30, cornerMarkerThickness=10, rectangleThickness=1):
         xStart, yStart, w, h = boundingBox
         xEnd, yEnd = xStart + w, yStart + h
 
-        cv2.rectangle(img, boundingBox, ANNOTATION_COLOR, 2)
+        cv2.rectangle(img, boundingBox, ANNOTATION_COLOR, rectangleThickness)
         # top left corner
         cv2.line(img, (xStart, yStart), (xStart + cornerMarkerLength, yStart), ANNOTATION_COLOR, cornerMarkerThickness)
         cv2.line(img, (xStart, yStart), (xStart, yStart + cornerMarkerLength), ANNOTATION_COLOR, cornerMarkerThickness)
