@@ -34,7 +34,7 @@ class FaceDetector:
                 # a tuple containing (id, boundingBox, detectionScore)
                 boundingBoxes.append((ind, boundingBox, detection.score))
                 if draw:
-                    cv2.rectangle(img, boundingBox, ANNOTATION_COLOR, 2)
+                    img = self.customDraw(img, boundingBox)
                     cv2.putText(
                         img,
                         f"{int(detection.score[0] * 100)}%",
@@ -55,9 +55,32 @@ class FaceDetector:
             res.append(self.findFace(frame, draw))
         return res
 
+    def customDraw(self, img, boundingBox, cornerMarkerLength=30, cornerMarkerThickness=10):
+        xStart, yStart, w, h = boundingBox
+        xEnd, yEnd = xStart + w, yStart + h
+
+        cv2.rectangle(img, boundingBox, ANNOTATION_COLOR, 2)
+        # top left corner
+        cv2.line(img, (xStart, yStart), (xStart + cornerMarkerLength, yStart), ANNOTATION_COLOR, cornerMarkerThickness)
+        cv2.line(img, (xStart, yStart), (xStart, yStart + cornerMarkerLength), ANNOTATION_COLOR, cornerMarkerThickness)
+
+        # top right corner
+        cv2.line(img, (xEnd, yStart), (xEnd - cornerMarkerLength, yStart), ANNOTATION_COLOR, cornerMarkerThickness)
+        cv2.line(img, (xEnd, yStart), (xEnd, yStart + cornerMarkerLength), ANNOTATION_COLOR, cornerMarkerThickness)
+
+        # bottom right corner
+        cv2.line(img, (xEnd, yEnd), (xEnd - cornerMarkerLength, yEnd), ANNOTATION_COLOR, cornerMarkerThickness)
+        cv2.line(img, (xEnd, yEnd), (xEnd, yEnd - cornerMarkerLength), ANNOTATION_COLOR, cornerMarkerThickness)
+
+        # bottom left corner
+        cv2.line(img, (xStart, yEnd), (xStart + cornerMarkerLength, yEnd), ANNOTATION_COLOR, cornerMarkerThickness)
+        cv2.line(img, (xStart, yEnd), (xStart, yEnd - cornerMarkerLength), ANNOTATION_COLOR, cornerMarkerThickness)
+
+        return img
+
 
 def main():
-    filename = "./assets/techPeople1.png"
+    filename = "./assets/techPeople0.jpg"
     filename = os.path.normpath(filename)
     write = True
 
