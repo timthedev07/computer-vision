@@ -35,7 +35,7 @@ class HandDetector:
                         img,
                         handLandmarks,
                         self.mpHands.HAND_CONNECTIONS,
-                        self.mpDrawingStyles.get_default_hand_connections_style,
+                        self.mpDrawingStyles.get_default_hand_landmarks_style(),
                         self.drawingSpec,
                     )
         return (img, hands)
