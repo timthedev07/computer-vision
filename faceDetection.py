@@ -70,7 +70,7 @@ class FaceDetector:
 
 
 def main():
-    filename = "./assets/oldmanThumbsUp.jpg"
+    filename = "./assets/IpMan4Faces0.mp4"
     filename = os.path.normpath(filename)
     write = True
 
@@ -113,21 +113,25 @@ def main():
         return
 
     if fileType == "video":
-        outputFilename = f"out/face/buffer-{filename.split(os.sep)[-1]}"
-        outputVideo = cv2.VideoWriter(outputFilename, cv2.VideoWriter_fourcc(*"MP4V"), 30, (frameWidth, frameHeight))
+        outputFilename = f"out/face/{filename.split(os.sep)[-1]}"
+        bufferOutputFilename = f"out/face/buffer-{filename.split(os.sep)[-1]}"
+        outputVideo = cv2.VideoWriter(
+            bufferOutputFilename, cv2.VideoWriter_fourcc(*"MP4V"), 30, (frameWidth, frameHeight)
+        )
         for frame in frames:
             outputVideo.write(frame)
         outputVideo.release()
 
         processedFfmpegVideo = ffmpeg.input(outputFilename)
 
-        ffmpeg.concat(processedFfmpegVideo, audio, v=1, a=1).output(outputFilename.replace("buffer-", "", 1)).run()
-        os.remove(outputFilename)
+        ffmpeg.concat(processedFfmpegVideo, audio, v=1, a=1).output(outputFilename).run()
+        os.remove(bufferOutputFilename)
 
     else:
         outputFilename = f"out/face/{filename.split(os.sep)[-1]}"
         if write:
             cv2.imwrite(outputFilename, frames[0])
+    outputFilename = outputFilename.replace("buffer-", "")
 
     print(colored(f"Output written to {outputFilename}", "green"))
 
