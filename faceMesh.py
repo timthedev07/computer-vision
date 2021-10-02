@@ -47,7 +47,7 @@ class FaceMeshDetector:
 
 
 def main():
-    filename = "./assets/IpMan4Faces0.mp4"
+    filename = "./assets/techPeople0.jpg"
     filename = os.path.normpath(filename)
     write = True
 
