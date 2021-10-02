@@ -1,25 +1,58 @@
+import os
 import cv2
 import mediapipe as mp
 from utils import checkFileType, readVideo
-import os
+from termcolor import colored
+import ffmpeg
+
+# False, 4, 0.65
+
+
+class HandDetector:
+    def __init__(self, staticImageMode=False, maxNumHands=2, minDetectionConfidence=0.5, minTrackingConfidence=0.5):
+        # get the hands recognition object
+        self.mpHands = mp.solutions.hands
+        self.hands = self.mpHands.Hands(staticImageMode, maxNumHands, minDetectionConfidence, minTrackingConfidence)
+        self.mpDraw = mp.solutions.drawing_utils
+
+    def findHands(self, img, draw=True):
+        currResult = self.hands.process(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+        allHandLandmarks = currResult.multi_hand_landmarks
+        hands = []
+        if allHandLandmarks:
+            for handLandmarks in allHandLandmarks:
+                hand = []
+                for ind, landmark in enumerate(handLandmarks.landmark):
+                    imageH, imageW, _ = img.shape
+                    x, y = int(landmark.x * imageW), int(landmark.y * imageH)
+                    hand.append((ind, x, y))
+                hands.append(hand)
+
+                if draw:
+                    self.mpDraw.draw_landmarks(img, handLandmarks, self.mpHands.HAND_CONNECTIONS)
+        return (img, hands)
+
+    def findHandsInFrames(self, frames: list, draw=True):
+        """
+        Returns a list of tuples where `list[i] = (frame, landmarks)`
+        """
+        res = []
+        for frame in frames:
+            res.append(self.findHands(frame, draw))
+        return res
 
 
 def main():
     """Main function"""
-    filename = "./assets/IP MAN 0.mp4"
+    filename = "./assets/hand0.jpg"
     filename = os.path.normpath(filename)
     write = True
 
     fileType = checkFileType(filename)
 
     if fileType == "other":
-        print("Unsupported file format")
+        print(colored("Unsupported file format", "red"))
         return
-
-    # get the hands recognition object
-    mpHands = mp.solutions.hands
-    hands = mpHands.Hands(False, 4, 0.65)
-    mpDraw = mp.solutions.drawing_utils
 
     frameWidth = None
     frameHeight = None
@@ -30,17 +63,14 @@ def main():
         img = cv2.imread(filename)
         frames.append(img)
     else:
-        (frames, (frameWidth, frameHeight)) = readVideo(filename, True)
+        ((frames, audio), (frameWidth, frameHeight, fps)) = readVideo(filename, True, True)
 
-    print(f"Finish reading {fileType}")
+    print(colored(f"Finish reading {fileType}", "green"))
 
-    for frame in frames:
-        currResult = hands.process(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
-        if currResult.multi_hand_landmarks:
-            for handLandmark in currResult.multi_hand_landmarks:
-                mpDraw.draw_landmarks(frame, handLandmark, mpHands.HAND_CONNECTIONS)
+    detector = HandDetector()
+    detector.findHandsInFrames(frames)
 
-    print("Finish processing hand detection")
+    print(colored("Finish processing hand detection", "green"))
 
     if not write:
         if fileType == "video":
@@ -52,19 +82,29 @@ def main():
             cv2.waitKey(0)
         return
 
-    outputFilename = f"out/hands/{filename.split(os.sep)[-1]}"
-
     if fileType == "video":
-        outputVideo = cv2.VideoWriter(outputFilename, cv2.VideoWriter_fourcc(*"MP4V"), 30, (frameWidth, frameHeight))
+        outputFilename = f"out/hands{filename.split(os.sep)[-1]}"
+        bufferOutputFilename = f"out/handsbuffer-{filename.split(os.sep)[-1]}"
+        outputVideo = cv2.VideoWriter(
+            bufferOutputFilename, cv2.VideoWriter_fourcc(*"MP4V"), fps, (frameWidth, frameHeight)
+        )
         for frame in frames:
             outputVideo.write(frame)
+            cv2.waitKey(1)
         outputVideo.release()
 
+        processedFfmpegVideo = ffmpeg.input(bufferOutputFilename)
+
+        ffmpeg.concat(processedFfmpegVideo, audio, v=1, a=1).output(outputFilename, loglevel="quiet").run()
+        os.remove(bufferOutputFilename)
+
     else:
+        outputFilename = f"out/hands{filename.split(os.sep)[-1]}"
         if write:
             cv2.imwrite(outputFilename, frames[0])
+    outputFilename = outputFilename.replace("buffer-", "")
 
-    print(f"Output written to {outputFilename}")
+    print(colored(f"Output written to {outputFilename}", "green"))
 
 
 if __name__ == "__main__":
