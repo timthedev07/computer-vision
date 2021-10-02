@@ -122,7 +122,7 @@ def main():
             outputVideo.write(frame)
         outputVideo.release()
 
-        processedFfmpegVideo = ffmpeg.input(outputFilename)
+        processedFfmpegVideo = ffmpeg.input(bufferOutputFilename)
 
         ffmpeg.concat(processedFfmpegVideo, audio, v=1, a=1).output(outputFilename).run()
         os.remove(bufferOutputFilename)
