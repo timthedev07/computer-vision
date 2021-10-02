@@ -2,5 +2,8 @@
 
 Requirements:
 
-- `pip install -r requirements.txt`
-- `brew install ffmpeg` on mac and `sudo apt install ffmpeg` on linux
+ - `pip install -r requirements.txt`
+ - `brew install ffmpeg` on mac and `sudo apt install ffmpeg` on linux
+
+Run programs:
+ - Run programs inside of the modules directory `python module/<program>.py` - Attention: Don't `cd` into the modules directory before running the programs.
