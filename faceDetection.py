@@ -126,6 +126,7 @@ def main():
         )
         for frame in frames:
             outputVideo.write(frame)
+            cv2.waitKey(1)
         outputVideo.release()
 
         processedFfmpegVideo = ffmpeg.input(bufferOutputFilename)
