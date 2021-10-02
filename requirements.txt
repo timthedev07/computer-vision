@@ -14,3 +14,5 @@ python-dateutil==2.8.2
 six==1.16.0
 termcolor==1.1.0
 ffmpeg-python==0.2.0
+-e git+git@github.com:timthedev07/computer-vision.git@cc7d4855303a1a7352d5452192e2be508813d5d3#egg=computer_vision
+pycaw==20181226
