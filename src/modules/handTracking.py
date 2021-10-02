@@ -14,6 +14,7 @@ class HandDetector:
         self.mpHands = mp.solutions.hands
         self.hands = self.mpHands.Hands(staticImageMode, maxNumHands, minDetectionConfidence, minTrackingConfidence)
         self.mpDraw = mp.solutions.drawing_utils
+        self.drawingSpec = self.mpDraw.DrawingSpec(ANNOTATION_COLOR)
 
     def findHands(self, img, draw=True):
         currResult = self.hands.process(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
@@ -29,7 +30,7 @@ class HandDetector:
                 hands.append(hand)
 
                 if draw:
-                    self.mpDraw.draw_landmarks(img, handLandmarks, self.mpHands.HAND_CONNECTIONS)
+                    self.mpDraw.draw_landmarks(img, handLandmarks, self.mpHands.HAND_CONNECTIONS, self.drawingSpec)
         return (img, hands)
 
     def findHandsInFrames(self, frames: list, draw=True):
