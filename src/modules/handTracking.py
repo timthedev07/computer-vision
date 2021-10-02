@@ -69,7 +69,7 @@ class HandDetector:
         if x is None or y is None:
             raise ValueError("")
 
-        cv2.circle(img, (x, y), 15, circleRadius, cv2.FILLED)
+        cv2.circle(img, (x, y), circleRadius, EMPHASIS_COLOR, cv2.FILLED)
 
         return img
 
