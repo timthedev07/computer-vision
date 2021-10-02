@@ -99,7 +99,7 @@ def main():
         img = cv2.imread(filename)
         frames.append(img)
     else:
-        ((frames, audio), (frameWidth, frameHeight)) = readVideo(filename, True, True)
+        ((frames, audio), (frameWidth, frameHeight, fps)) = readVideo(filename, True, True)
 
     print(colored(f"Finish reading {fileType}", "green"))
 
@@ -122,7 +122,7 @@ def main():
         outputFilename = f"out/face/{filename.split(os.sep)[-1]}"
         bufferOutputFilename = f"out/face/buffer-{filename.split(os.sep)[-1]}"
         outputVideo = cv2.VideoWriter(
-            bufferOutputFilename, cv2.VideoWriter_fourcc(*"MP4V"), 30, (frameWidth, frameHeight)
+            bufferOutputFilename, cv2.VideoWriter_fourcc(*"MP4V"), fps, (frameWidth, frameHeight)
         )
         for frame in frames:
             outputVideo.write(frame)
