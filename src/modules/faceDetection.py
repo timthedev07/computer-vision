@@ -1,7 +1,7 @@
 import os
 import cv2
 import mediapipe as mp
-from utils import checkFileType, readVideo
+from src.modules.utils import checkFileType, readVideo
 from termcolor import colored
 import ffmpeg
 
