@@ -80,7 +80,7 @@ class FaceDetector:
 
 
 def main():
-    filename = "./assets/ben0.mp4"
+    filename = "./assets/IP MAN 0.mp4"
     filename = os.path.normpath(filename)
     write = True
 
