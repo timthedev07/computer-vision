@@ -33,7 +33,7 @@ class FaceMeshDetector:
                     imageH, imageW, _ = img.shape
                     x, y = int(landmark.x * imageW), int(landmark.y * imageH)
                     face.append((ind, x, y))
-                faces.append(tuple(face))
+                faces.append(face)
         return (img, faces)
 
     def findFaceMeshInFrames(self, frames: list, draw=True):
