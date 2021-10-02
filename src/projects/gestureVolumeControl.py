@@ -1,6 +1,11 @@
 import cv2
 from src.modules import handTracking as ht
 import math
+import numpy as np
+from ctypes import cast, POINTER
+from comtypes import CLSCTX_ALL
+from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
+
 
 CAMERA_WIDTH, CAMERA_HEIGHT = 640, 480
 
@@ -11,6 +16,13 @@ def main():
     cap.set(4, CAMERA_HEIGHT)
 
     detector = ht.HandDetector(minDetectionConfidence=0.7)
+    devices = AudioUtilities.GetSpeakers()
+    interface = devices.Activate(IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
+    volume = cast(interface, POINTER(IAudioEndpointVolume))
+    # volume.GetMasterVolumeLevel()
+    volumeRange = volume.GetVolumeRange()
+    minVolume = volumeRange[0]
+    maxVolume = volumeRange[1]
 
     while True:
         success, img = cap.read()
@@ -33,7 +45,10 @@ def main():
             _, x2, y2 = hand[8]
             midX, midY = (x1 + x2) // 2, (y1 + y2) // 2
 
+            # Finger(index and thumb) distance range: 50 - 300
             length = math.hypot(x2 - x1, y2 - y1)
+            newVolume = np.interp(length, [50, 300], [minVolume, maxVolume])
+            volume.SetMasterVolumeLevel(newVolume, None)
 
             midCircleColor = ht.EMPHASIS_COLOR
 
