@@ -96,7 +96,7 @@ class HandDetector:
         if x2 is None or y2 is None:
             raise ValueError("Id of landmark B is invalid")
 
-        cv2.line(img, (x1, y2), (x2, y2), EMPHASIS_COLOR, thickness)
+        cv2.line(img, (x1, y1), (x2, y2), EMPHASIS_COLOR, thickness)
 
         return img
 
