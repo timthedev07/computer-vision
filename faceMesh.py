@@ -16,7 +16,7 @@ class FaceMeshDetector:
         self.face = self.mpFace.FaceDetection(min_detection_confidence, model_selection)
         self.mpDraw = mp.solutions.drawing_utils
 
-    def findFace(self, img, draw=True):
+    def findFaceMesh(self, img, draw=True):
         currResult = self.face.process(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
         detections = currResult.detections
         boundingBoxes = []
@@ -46,13 +46,13 @@ class FaceMeshDetector:
                     )
         return (img, boundingBoxes)
 
-    def findFaceInFrames(self, frames: list, draw=True):
+    def findFaceMeshInFrames(self, frames: list, draw=True):
         """
         Returns a list of tuples where `list[i] = (frame, landmarks)`
         """
         res = []
         for frame in frames:
-            res.append(self.findFace(frame, draw))
+            res.append(self.findFaceMesh(frame, draw))
         return res
 
     def customDraw(self, img, boundingBox, cornerMarkerLength=30, cornerMarkerThickness=10, rectangleThickness=1):
@@ -104,7 +104,7 @@ def main():
     print(colored(f"Finish reading {fileType}", "green"))
 
     detector = FaceMeshDetector()
-    detector.findFaceInFrames(frames, True)
+    detector.findFaceMeshInFrames(frames, True)
 
     print(colored("Finish processing face detection", "green"))
 
