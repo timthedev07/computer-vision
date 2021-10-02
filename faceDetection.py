@@ -80,7 +80,7 @@ class FaceDetector:
 
 
 def main():
-    filename = "./assets/techPeople0.jpg"
+    filename = "./assets/ben0.mp4"
     filename = os.path.normpath(filename)
     write = True
 
@@ -130,7 +130,7 @@ def main():
 
         processedFfmpegVideo = ffmpeg.input(bufferOutputFilename)
 
-        ffmpeg.concat(processedFfmpegVideo, audio, v=1, a=1).output(outputFilename).run()
+        ffmpeg.concat(processedFfmpegVideo, audio, v=1, a=1).output(outputFilename, loglevel="quite").run()
         os.remove(bufferOutputFilename)
 
     else:
