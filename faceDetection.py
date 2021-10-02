@@ -130,7 +130,7 @@ def main():
 
         processedFfmpegVideo = ffmpeg.input(bufferOutputFilename)
 
-        ffmpeg.concat(processedFfmpegVideo, audio, v=1, a=1).output(outputFilename, loglevel="quite").run()
+        ffmpeg.concat(processedFfmpegVideo, audio, v=1, a=1).output(outputFilename, loglevel="quiet").run()
         os.remove(bufferOutputFilename)
 
     else:
