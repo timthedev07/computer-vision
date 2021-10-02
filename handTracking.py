@@ -83,8 +83,8 @@ def main():
         return
 
     if fileType == "video":
-        outputFilename = f"out/hands{filename.split(os.sep)[-1]}"
-        bufferOutputFilename = f"out/handsbuffer-{filename.split(os.sep)[-1]}"
+        outputFilename = f"out/hands/{filename.split(os.sep)[-1]}"
+        bufferOutputFilename = f"out/hands/buffer-{filename.split(os.sep)[-1]}"
         outputVideo = cv2.VideoWriter(
             bufferOutputFilename, cv2.VideoWriter_fourcc(*"MP4V"), fps, (frameWidth, frameHeight)
         )
@@ -99,7 +99,7 @@ def main():
         os.remove(bufferOutputFilename)
 
     else:
-        outputFilename = f"out/hands{filename.split(os.sep)[-1]}"
+        outputFilename = f"out/hands/{filename.split(os.sep)[-1]}"
         if write:
             cv2.imwrite(outputFilename, frames[0])
     outputFilename = outputFilename.replace("buffer-", "")
