@@ -80,7 +80,7 @@ def main():
 
     print(colored(f"Finish reading {fileType}", "green"))
 
-    detector = FaceDetector(0.75)
+    detector = FaceDetector()
     detector.findFaceInFrames(frames, True)
 
     print(colored("Finish processing face detection", "green"))
