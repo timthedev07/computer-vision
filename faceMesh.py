@@ -15,14 +15,18 @@ class FaceMeshDetector:
             staticImageMode, maxNumFaces, minDetectionConfidence, minTrackingConfidence
         )
         self.mpDraw = mp.solutions.drawing_utils
-        self.drawSpec = self.mpDraw.DrawingSpec(thickness=1, circle_radius=2, color=ANNOTATION_COLOR)
+        self.drawSpec = self.mpDraw.DrawingSpec(thickness=1, circle_radius=1, color=ANNOTATION_COLOR)
 
     def findFaceMesh(self, img, draw=True):
         currResult = self.face.process(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
         multiFacelandmarks = currResult.multi_face_landmarks
         if multiFacelandmarks:
             for faceLandmarks in multiFacelandmarks:
-                self.mpDraw.draw_landmarks(img, faceLandmarks, self.mpFaceMesh.FACEMESH_TESSELATION, self.drawSpec)
+                if draw:
+                    self.mpDraw.draw_landmarks(img, faceLandmarks, self.mpFaceMesh.FACEMESH_TESSELATION, self.drawSpec)
+                for ind, landmark in enumerate(faceLandmarks.landmark):
+                    imageH, imageW, _ = img.shape
+                    x, y = int(landmark.x * imageW), int(landmark.y * imageH)
 
     def findFaceMeshInFrames(self, frames: list, draw=True):
         """
@@ -58,7 +62,7 @@ class FaceMeshDetector:
 
 
 def main():
-    filename = "./assets/ben0.mp4"
+    filename = "./assets/IpMan4Faces0.mp4"
     filename = os.path.normpath(filename)
     write = True
 
@@ -81,7 +85,7 @@ def main():
 
     print(colored(f"Finish reading {fileType}", "green"))
 
-    detector = FaceMeshDetector()
+    detector = FaceMeshDetector(maxNumFaces=10, minDetectionConfidence=0.3)
     detector.findFaceMeshInFrames(frames, True)
 
     print(colored("Finish processing face detection", "green"))
