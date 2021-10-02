@@ -5,7 +5,7 @@ from utils import checkFileType, readVideo
 from termcolor import colored
 import ffmpeg
 
-# False, 4, 0.65
+ANNOTATION_COLOR = (26, 246, 0)
 
 
 class HandDetector:
@@ -41,6 +41,29 @@ class HandDetector:
             res.append(self.findHands(frame, draw))
         return res
 
+    def highlightLandmark(self, img, hands, landmarkId):
+        """Given a list of hands, highlight the landmark where `landmark.id = landmarkId` across all hands.
+
+        Args:
+            img: cv2 img
+            hands (List[List[Tuple[int, int]]]): A list of hands
+            landmarkId ([type]): [description]
+        """
+        x, y = None, None
+
+        for hand in hands:
+            for ind, currX, currY in hand:
+                if ind == landmarkId:
+                    x, y = currX, currY
+                    break
+
+        if x is None or y is None:
+            raise ValueError("")
+
+        cv2.circle(img, (x, y), 15, ANNOTATION_COLOR, cv2.FILLED)
+
+        return img
+
 
 def main():
     """Main function"""
@@ -68,7 +91,13 @@ def main():
     print(colored(f"Finish reading {fileType}", "green"))
 
     detector = HandDetector()
-    detector.findHandsInFrames(frames)
+    framesWithHands = detector.findHandsInFrames(frames)
+    frames = []
+    for frameWithHands in framesWithHands:
+        (frame, hands) = frameWithHands
+        detector.highlightLandmark(frame, hands, 4)
+        detector.highlightLandmark(frame, hands, 8)
+        frames.append(frame)
 
     print(colored("Finish processing hand detection", "green"))
 
