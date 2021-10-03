@@ -41,6 +41,13 @@ class PoseDetector:
         self.drawingSpecLandmark = self.mpDraw.DrawingSpec((20, 20, 255), 3, 15)
 
     def findPose(self, img, draw=True):
+        """
+        Returns a tuples structured as `(img, poses)`
+        And "poses" is:
+        ```python
+        list[list[tuple[landmarkId: int, x: int, y: int]]]
+        ```
+        """
         currResult = self.pose.process(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
         landmarks = currResult.pose_landmarks
         poses = []
