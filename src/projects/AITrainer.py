@@ -58,7 +58,7 @@ def main():
                     curlsCount += 0.5
                     direction = 0
 
-            cv2.putText(frame, f"Count: {int(curlsCount)}", (50, 100), cv2.FONT_HERSHEY_PLAIN, 5, (255, 0, 0), 5)
+            cv2.putText(frame, f"Count: {int(curlsCount)}", (50, 100), cv2.FONT_HERSHEY_PLAIN, 5, (255, 100, 100), 5)
 
         frames.append(frame)
 
