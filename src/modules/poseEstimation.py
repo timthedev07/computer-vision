@@ -4,6 +4,7 @@ import os
 from src.modules.utils import checkFileType, readVideo
 from termcolor import colored
 import ffmpeg
+import math
 from src.modules.handTracking import EMPHASIS_COLOR
 
 
@@ -114,10 +115,11 @@ class PoseDetector:
             landmarkC: C
             draw (bool, optional): [description]. Defaults to True.
         """
-        # trigonometry
         x1, y1 = pose[landmarkAId][1:]
         x2, y2 = pose[landmarkBId][1:]
         x3, y3 = pose[landmarkCId][1:]
+
+        angle = abs(math.degrees(math.atan2(y3 - y2, x3 - x2) - math.atan2(y1 - y2, x1 - x2)))
 
         if draw:
             cv2.line(img, (x1, y1), (x2, y2), (255, 255, 255), 5)
@@ -128,8 +130,9 @@ class PoseDetector:
             cv2.circle(img, (x2, y2), 15, (0, 0, 255), 2)
             cv2.circle(img, (x3, y3), 10, (0, 0, 255), cv2.FILLED)
             cv2.circle(img, (x3, y3), 15, (0, 0, 255), 2)
+            cv2.putText(img, f"{round(angle)}deg", (x2 - 20, y2 + 50), cv2.FONT_HERSHEY_PLAIN, 3, (255, 0, 255), 4)
 
-        return img
+        return (img, angle)
 
 
 def main():
