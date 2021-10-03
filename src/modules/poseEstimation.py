@@ -106,7 +106,9 @@ class PoseDetector:
 
         return img
 
-    def findAndComputeAngle(self, img, pose: list, landmarkAId, landmarkBId, landmarkCId, draw=True):
+    def findAndComputeAngle(
+        self, img, pose: list, landmarkAId, landmarkBId, landmarkCId, draw=True, drawAngleValue=False
+    ):
         """Computes and returns the value of ∠ABC
 
         Args:
@@ -133,7 +135,8 @@ class PoseDetector:
             cv2.circle(img, (x2, y2), 15, (0, 0, 255), 2)
             cv2.circle(img, (x3, y3), 10, (0, 0, 255), cv2.FILLED)
             cv2.circle(img, (x3, y3), 15, (0, 0, 255), 2)
-            cv2.putText(img, f"{round(angle)}deg", (x2 - 20, y2 + 50), cv2.FONT_HERSHEY_PLAIN, 3, (0, 0, 255), 4)
+            if drawAngleValue:
+                cv2.putText(img, f"{round(angle)}deg", (x2 - 20, y2 + 50), cv2.FONT_HERSHEY_PLAIN, 3, (0, 0, 255), 4)
 
         return (img, angle)
 
