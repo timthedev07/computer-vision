@@ -130,7 +130,6 @@ def outputWrite(
                 os.remove(bufferOutputFilename)
             # pylint: disable=bare-except
             except:
-                os.remove(filename)
                 outputFilename = f"out/{outputDirectoryName}/{filename.split(os.sep)[-1]}"
                 copyfile(bufferOutputFilename, outputFilename)
 
