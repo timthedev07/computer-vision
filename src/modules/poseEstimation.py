@@ -4,6 +4,7 @@ import os
 from src.modules.utils import checkFileType, readVideo
 from termcolor import colored
 import ffmpeg
+from src.modules.handTracking import EMPHASIS_COLOR
 
 
 class PoseDetector:
