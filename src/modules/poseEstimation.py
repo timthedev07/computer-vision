@@ -105,6 +105,32 @@ class PoseDetector:
 
         return img
 
+    def findAndComputeAngle(self, img, pose: list, landmarkAId, landmarkBId, landmarkCId, draw=True):
+        """Computes and returns the value of ∠ABC
+
+        Args:
+            landmarkA: A
+            landmarkB: B
+            landmarkC: C
+            draw (bool, optional): [description]. Defaults to True.
+        """
+        # trigonometry
+        x1, y1 = pose[landmarkAId][1:]
+        x2, y2 = pose[landmarkBId][1:]
+        x3, y3 = pose[landmarkCId][1:]
+
+        if draw:
+            cv2.line(img, (x1, y1), (x2, y2), (255, 255, 255), 5)
+            cv2.line(img, (x2, y2), (x3, y3), (255, 255, 255), 5)
+            cv2.circle(img, (x1, y1), 10, (0, 0, 255), cv2.FILLED)
+            cv2.circle(img, (x1, y1), 15, (0, 0, 255), 2)
+            cv2.circle(img, (x2, y2), 10, (0, 0, 255), cv2.FILLED)
+            cv2.circle(img, (x2, y2), 15, (0, 0, 255), 2)
+            cv2.circle(img, (x3, y3), 10, (0, 0, 255), cv2.FILLED)
+            cv2.circle(img, (x3, y3), 15, (0, 0, 255), 2)
+
+        return img
+
 
 def main():
     filename = "./assets/IpVsWan0.mp4"
