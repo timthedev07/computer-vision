@@ -35,13 +35,22 @@ class PoseDetector:
             minTrackingConfidence,
         )
         self.mpDraw = mp.solutions.drawing_utils
+        self.mpDrawingStyles = mp.solutions.drawing_styles
+        self.drawingSpecLine = self.mpDraw.DrawingSpec((20, 255, 0), 7)
+        self.drawingSpecLandmark = self.mpDraw.DrawingSpec((20, 20, 255), 3, 15)
 
     def findPose(self, img, draw=True):
         currResult = self.pose.process(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
         landmarks = currResult.pose_landmarks
         if landmarks:
             if draw:
-                self.mpDraw.draw_landmarks(img, landmarks, self.mpPose.POSE_CONNECTIONS)
+                self.mpDraw.draw_landmarks(
+                    img,
+                    landmarks,
+                    self.mpPose.POSE_CONNECTIONS,
+                    self.mpDrawingStyles.get_default_pose_landmarks_style(),
+                    self.drawingSpecLine,
+                )
             return (img, landmarks.landmark)
         return (img, [])
 
