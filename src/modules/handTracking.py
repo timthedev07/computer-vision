@@ -12,6 +12,7 @@ EMPHASIS_COLOR = (26, 0, 246)
 class HandDetector:
     def __init__(self, staticImageMode=False, maxNumHands=2, minDetectionConfidence=0.5, minTrackingConfidence=0.5):
         # get the hands recognition object
+        self.maxNumHands = maxNumHands
         self.mpHands = mp.solutions.hands
         self.hands = self.mpHands.Hands(staticImageMode, maxNumHands, minDetectionConfidence, minTrackingConfidence)
         self.mpDraw = mp.solutions.drawing_utils
@@ -23,7 +24,10 @@ class HandDetector:
         allHandLandmarks = currResult.multi_hand_landmarks
         hands = []
         if allHandLandmarks:
+            counter = 0
             for handLandmarks in allHandLandmarks:
+                if counter == self.maxNumHands:
+                    break
                 hand = []
                 for ind, landmark in enumerate(handLandmarks.landmark):
                     imageH, imageW, _ = img.shape
@@ -39,6 +43,7 @@ class HandDetector:
                         self.mpDrawingStyles.get_default_hand_landmarks_style(),
                         self.drawingSpec,
                     )
+                counter += 1
         return (img, hands)
 
     def findHandsInFrames(self, frames: list, draw=True):
