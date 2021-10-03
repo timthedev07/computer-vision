@@ -39,7 +39,11 @@ def main():
     frames = []
     for frame, poses in allPosesInFrames:
         for pose in poses:
-            (frame, angle) = detector.findAndComputeAngle(frame, pose, 11, 13, 15)
+            # right arm
+            (frame, angle) = detector.findAndComputeAngle(frame, pose, 12, 14, 16)
+
+            # # left arm
+            # (frame, angle) = detector.findAndComputeAngle(frame, pose, 11, 13, 15)
         frames.append(frame)
 
     print(colored("Finish processing face detection", "green"))

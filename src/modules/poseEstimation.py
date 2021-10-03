@@ -119,7 +119,10 @@ class PoseDetector:
         x2, y2 = pose[landmarkBId][1:]
         x3, y3 = pose[landmarkCId][1:]
 
-        angle = abs(math.degrees(math.atan2(y3 - y2, x3 - x2) - math.atan2(y1 - y2, x1 - x2)))
+        angle = math.degrees(math.atan2(y3 - y2, x3 - x2) - math.atan2(y1 - y2, x1 - x2))
+
+        if angle < 0:
+            angle += 360
 
         if draw:
             cv2.line(img, (x1, y1), (x2, y2), (255, 255, 255), 5)
