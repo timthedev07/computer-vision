@@ -11,11 +11,12 @@ def main():
     cap.set(3, CAMERA_WIDTH)
     cap.set(4, CAMERA_HEIGHT)
 
-    detector = ht.HandDetector(minDetectionConfidence=0.7)
+    detector = ht.HandDetector(minDetectionConfidence=0.7, maxNumHands=1)
 
     fingerImages = []
     fingerImagesDirectory = "assets/fingers"
     directoryContent = os.listdir(fingerImagesDirectory)
+    directoryContent.sort()
     for imageFilename in directoryContent:
         fingerImage = cv2.imread(f"{fingerImagesDirectory}/{imageFilename}")
         fingerImages.append(fingerImage)
@@ -37,12 +38,13 @@ def main():
             hands = [hands[0]]
             hand = hands[0]
 
+            # if the index finger metacarpophalangeal joint
+            # is on the right hand side of the pinky MCP joint,
+            # it is the right hand
             rightHand = hand[5][1] > hand[17][1]
 
-            print("Right hand" if rightHand else "Left hand")
-
             # edge case => the thumb
-            if hand[4][1] < hand[3][1]:
+            if hand[4][1] < hand[3][1] if rightHand else hand[4][1] > hand[3][1]:
                 fingerStates.append(0)
             else:
                 fingerStates.append(1)
@@ -54,9 +56,8 @@ def main():
                 else:
                     fingerStates.append(0)
 
-        print(fingerStates)
-
-        fingerImage = fingerImages[0]
+        totalFingers = fingerStates.count(1)
+        fingerImage = fingerImages[totalFingers]
         fingerImageH, fingerImageW, _ = fingerImage.shape
         img[0:fingerImageH, 0:fingerImageW] = fingerImage
         # ===========
