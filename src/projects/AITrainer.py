@@ -9,7 +9,7 @@ CAMERA_WIDTH, CAMERA_HEIGHT = 640, 480
 
 
 def main():
-    filename = "./assets/maLong1.jpg"
+    filename = "./assets/ipmanpic0.jpg"
     filename = os.path.normpath(filename)
     write = True
 
@@ -35,8 +35,12 @@ def main():
     print(colored(f"Finish reading {fileType}", "green"))
 
     detector = PoseDetector()
-    (img, landmarks) = detector.findPose(img)
-    detector.findLandmarksPositions(img, landmarks)
+    allPosesInFrames = detector.findPoseInFrames(frames, False)
+    frames = []
+    for frame, poses in allPosesInFrames:
+        for pose in poses:
+            (frame, angle) = detector.findAndComputeAngle(frame, pose, 11, 13, 15)
+        frames.append(frame)
 
     print(colored("Finish processing face detection", "green"))
 
