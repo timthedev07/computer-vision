@@ -117,7 +117,7 @@ def outputWrite(
             outputVideo.release()
         else:
             bufferOutputFilename = f"{tempfile.gettempdir()}/buffer-{filename.split(os.sep)[-1]}"
-            outputVideo = cv2.VideoWriter(bufferOutputFilename, cv2.VideoWriter_fourcc(*"MP4V"), fps, frameShape)
+            outputVideo = cv2.VideoWriter(bufferOutputFilename, cv2.VideoWriter_fourcc(*"mp4v"), fps, frameShape)
             for frame in frames:
                 outputVideo.write(frame)
                 cv2.waitKey(1)
