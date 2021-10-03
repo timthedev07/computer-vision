@@ -42,6 +42,7 @@ class PoseDetector:
     def findPose(self, img, draw=True):
         currResult = self.pose.process(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
         landmarks = currResult.pose_landmarks
+        poses = []
         if landmarks:
             if draw:
                 self.mpDraw.draw_landmarks(
@@ -51,32 +52,50 @@ class PoseDetector:
                     self.mpDrawingStyles.get_default_pose_landmarks_style(),
                     self.drawingSpecLine,
                 )
-            return (img, landmarks.landmark)
-        return (img, [])
+            pose = []
+            for ind, landmark in enumerate(landmarks.landmark):
+                imageH, imageW, _ = img.shape
+                x, y = int(landmark.x * imageW), int(landmark.y * imageH)
+                pose.append((ind, x, y))
+            poses.append(pose)
+
+        return (img, poses)
 
     def findPoseInFrames(self, frames: list, draw=True):
         """
-        Returns a list of tuples where `list[i] = (frame, landmarks)`
+        Returns a list of tuples where `list[i] = (frame, poses)`
+        And "poses" is:
+        ```python
+        list[list[tuple[landmarkId: int, x: int, y: int]]]
+        ```
         """
         res = []
         for frame in frames:
             res.append(self.findPose(frame, draw))
         return res
 
-    def findLandmarksPositions(self, img, landmarks, draw=True):
+    def highlightLandmark(self, img, poses, landmarkId, circleRadius=12):
+        """Given a list of poses, highlight the landmark where `landmark.id = landmarkId` across all poses.
+
+        Args:
+            img: cv2 img
+            poses (List[List[Tuple[int, int]]]): A list of hands
+            landmarkId ([type]): [description]
         """
-        Returns a list of tuples where `list[i] = (landmarkId, xPosition, yPosition)`
-        """
-        positions = []
-        if landmarks:
-            for ind, landmark in enumerate(landmarks):
-                h, w, _c = img.shape
-                # now the x and y position are in pixels rather than ratios
-                xPosition, yPosition = int(landmark.x * w), int(landmark.y * h)
-                positions.append([ind, xPosition, yPosition])
-                if draw:
-                    cv2.circle(img, (xPosition, yPosition), 5, (255, 0, 0), cv2.FILLED)
-        return positions
+        x, y = None, None
+
+        for pose in poses:
+            for ind, currX, currY in pose:
+                if ind == landmarkId:
+                    x, y = currX, currY
+                    break
+
+        if x is None or y is None:
+            raise ValueError("Invalid landmark id")
+
+        cv2.circle(img, (x, y), circleRadius, EMPHASIS_COLOR, cv2.FILLED)
+
+        return img
 
 
 def main():
@@ -104,11 +123,11 @@ def main():
     print(colored(f"Finish reading {fileType}", "green"))
 
     detector = PoseDetector()
-    poses = detector.findPoseInFrames(frames, True)
-    for pose in poses:
-        frame, landmarks = pose
-        landmarksPositions = detector.findLandmarksPositions(frame, landmarks)
-        print(landmarksPositions if 1 < 1 else "")
+
+    allPosesInFrames = detector.findPoseInFrames(frames, True)
+    frames = []
+    for frame, _ in allPosesInFrames:
+        frames.append(frame)
 
     print(colored("Finish processing pose estimation", "green"))
 
