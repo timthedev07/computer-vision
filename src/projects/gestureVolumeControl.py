@@ -1,3 +1,4 @@
+import platform
 import cv2
 from src.modules import handTracking as ht
 import math
@@ -5,6 +6,7 @@ import numpy as np
 from ctypes import cast, POINTER
 from comtypes import CLSCTX_ALL
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
+import osascript
 
 
 CAMERA_WIDTH, CAMERA_HEIGHT = 640, 480
@@ -17,9 +19,9 @@ def main():
 
     detector = ht.HandDetector(minDetectionConfidence=0.7)
     devices = AudioUtilities.GetSpeakers()
-    interface = devices.Activate(IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
-    volume = cast(interface, POINTER(IAudioEndpointVolume))
-    # volume.GetMasterVolumeLevel()
+
+    # volume control initialization for windows
+    volume = cast(devices.Activate(IAudioEndpointVolume._iid_, CLSCTX_ALL, None), POINTER(IAudioEndpointVolume))
     volumeRange = volume.GetVolumeRange()
     minVolume = volumeRange[0]
     maxVolume = volumeRange[1]
@@ -47,8 +49,17 @@ def main():
 
             # Finger(index and thumb) distance range: 50 - 300
             length = math.hypot(x2 - x1, y2 - y1)
-            newVolume = np.interp(length, [50, 300], [minVolume, maxVolume])
-            volume.SetMasterVolumeLevel(newVolume, None)
+
+            system = platform.system()
+
+            if system == "Windows":
+                # update volume for windows
+                newVolume = np.interp(length, [50, 300], [minVolume, maxVolume])
+                volume.SetMasterVolumeLevel(newVolume, None)
+            elif system == "Darwin":
+                # update volume for mac
+                newVolume = np.interp(length, [50, 300], [0, 100])
+                osascript.osascript(f"set volume output volume {int(newVolume)}")
 
             midCircleColor = ht.EMPHASIS_COLOR
 
