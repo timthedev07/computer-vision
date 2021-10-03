@@ -9,9 +9,11 @@ CAMERA_WIDTH, CAMERA_HEIGHT = 640, 480
 
 
 def main():
-    filename = "./assets/ipmanpic0.jpg"
+    filename = "./assets/weightLifting0.mp4"
     filename = os.path.normpath(filename)
     write = True
+    curlsCount = 0
+    direction = 0  # 0 == up and 1 == down
 
     fileType = checkFileType(filename)
 
@@ -39,14 +41,30 @@ def main():
     frames = []
     for frame, poses in allPosesInFrames:
         for pose in poses:
-            # right arm
-            (frame, angle) = detector.findAndComputeAngle(frame, pose, 12, 14, 16)
+            # # right arm
+            # (frame, angle) = detector.findAndComputeAngle(frame, pose, 12, 14, 16)
 
-            # # left arm
-            # (frame, angle) = detector.findAndComputeAngle(frame, pose, 11, 13, 15)
+            # left arm
+            (frame, angle) = detector.findAndComputeAngle(frame, pose, 11, 13, 15)
+            percentage = np.interp(angle, (210, 310), (0, 100))
+
+            # check for a curl
+            if percentage == 100:
+                if direction == 0:
+                    # if arm reaches 100% upwards
+                    curlsCount += 0.5
+                    direction = 1
+            elif percentage == 0:
+                if direction == 1:
+                    # if arm reaches 0% downwards
+                    curlsCount += 0.5
+                    direction = 0
+
+            cv2.putText(frame, f"Count: {curlsCount}", (50, 100), cv2.FONT_HERSHEY_PLAIN, 5, (255, 0, 0), 5)
+
         frames.append(frame)
 
-    print(colored("Finish processing face detection", "green"))
+    print(colored("Finish processing pose detection", "green"))
 
     if not write:
         for frame in frames:
