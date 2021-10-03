@@ -1,6 +1,8 @@
 import cv2
 import ffmpeg
 import os
+import tempfile
+from shutil import copyfile
 
 
 def checkFileType(filename: str) -> str:
@@ -114,7 +116,7 @@ def outputWrite(
             outputVideo = cv2.VideoWriter(outputFilename, cv2.VideoWriter_fourcc(*"MP4V"), fps, frameShape)
             outputVideo.release()
         else:
-            bufferOutputFilename = f"out/{outputDirectoryName}/buffer-{filename.split(os.sep)[-1]}"
+            bufferOutputFilename = f"{tempfile.gettempdir()}/buffer-{filename.split(os.sep)[-1]}"
             outputVideo = cv2.VideoWriter(bufferOutputFilename, cv2.VideoWriter_fourcc(*"MP4V"), fps, frameShape)
             for frame in frames:
                 outputVideo.write(frame)
@@ -123,8 +125,13 @@ def outputWrite(
 
             processedFfmpegVideo = ffmpeg.input(bufferOutputFilename)
 
-            ffmpeg.concat(processedFfmpegVideo, audio, v=1, a=1).output(outputFilename, loglevel="quiet").run()
-            os.remove(bufferOutputFilename)
+            try:
+                ffmpeg.concat(processedFfmpegVideo, audio, v=1, a=1).output(filename, loglevel="quiet").run()
+                os.remove(bufferOutputFilename)
+            # pylint: disable=bare-except
+            except:
+                os.remove(filename)
+                copyfile(bufferOutputFilename, filename)
 
     else:
         outputFilename = f"out/{outputDirectoryName}/{filename.split(os.sep)[-1]}"
