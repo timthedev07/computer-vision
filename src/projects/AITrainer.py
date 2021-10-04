@@ -69,9 +69,9 @@ def main():
                 pass
 
         # Display bar
-        cv2.rectangle(frame, (1100, 100), (1175, 650), (255, 100, 100), cv2.FILLED)
-        cv2.rectangle(frame, (1100, int(bar)), (1175, 650), (255, 100, 100), cv2.FILLED)
-        cv2.putText(frame, f"{int(percentage)}%", (1100, 75), cv2.FONT_HERSHEY_PLAIN, 5, (255, 100, 100), 5)
+        cv2.rectangle(frame, (20, 300), (95, 950), (255, 100, 100), cv2.FILLED)
+        cv2.rectangle(frame, (20, int(bar)), (95, 950), (255, 100, 100), cv2.FILLED)
+        cv2.putText(frame, f"{int(percentage)}%", (20, 375), cv2.FONT_HERSHEY_PLAIN, 5, (255, 100, 100), 5)
 
         # Display curls count
         cv2.putText(frame, f"Count: {int(curlsCount)}", (50, 100), cv2.FONT_HERSHEY_PLAIN, 5, (255, 100, 100), 5)
