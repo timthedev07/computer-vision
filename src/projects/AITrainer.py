@@ -51,16 +51,19 @@ def main():
             bar = np.interp(
                 angle,
                 (CURL_DOWNWARDS_LIMIT + 10, CURL_UPWARDS_LIMIT - 10),
-                (650, 100),
+                (950, 400),
             )
 
             # check for a curl
+            color = (255, 100, 100)
             if percentage == 100:
+                color = (100, 255, 100)
                 if direction == 0:
                     # if arm reaches 100% upwards
                     curlsCount += 0.5
                     direction = 1
             elif percentage == 0:
+                color = (100, 255, 100)
                 if direction == 1:
                     # if arm reaches 0% downwards
                     curlsCount += 0.5
@@ -69,9 +72,9 @@ def main():
                 pass
 
         # Display bar
-        cv2.rectangle(frame, (20, 300), (95, 950), (255, 100, 100), cv2.FILLED)
-        cv2.rectangle(frame, (20, int(bar)), (95, 950), (255, 100, 100), cv2.FILLED)
-        cv2.putText(frame, f"{int(percentage)}%", (20, 375), cv2.FONT_HERSHEY_PLAIN, 5, (255, 100, 100), 5)
+        cv2.rectangle(frame, (20, 400), (95, 950), color, 3)
+        cv2.rectangle(frame, (20, int(bar)), (95, 950), color, cv2.FILLED)
+        cv2.putText(frame, f"{int(percentage)}%", (20, 375), cv2.FONT_HERSHEY_PLAIN, 5, color, 5)
 
         # Display curls count
         cv2.putText(frame, f"Count: {int(curlsCount)}", (50, 100), cv2.FONT_HERSHEY_PLAIN, 5, (255, 100, 100), 5)
