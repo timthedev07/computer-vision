@@ -3,7 +3,9 @@ import cv2
 import mediapipe as mp
 from src.modules.utils import checkFileType, readVideo
 from termcolor import colored
-import ffmpeg
+
+if __name__ == "__main__":
+    import ffmpeg
 
 ANNOTATION_COLOR = (26, 246, 0)
 EMPHASIS_COLOR = (26, 0, 246)
