@@ -16,6 +16,7 @@ def main():
 
     menu = menus[0]
     menuHeight, menuWidth, _ = menus[0].shape
+    detector = ht.HandDetector(minDetectionConfidence=0.85)
 
     cap = cv2.VideoCapture(0)
     cap.set(3, 1280)
@@ -28,6 +29,14 @@ def main():
         # do stuff here
 
         # find hand landmarks
+        img, hands = detector.findHands(img)
+        if len(hands) > 0:
+            hand = hands[0]
+            hands = [hand]
+
+            # tip of index and middle finger
+            x1, y1 = hand[8][1:]
+            x2, y2 = hand[12][1:]
 
         # check which fingers are up
 
@@ -36,7 +45,7 @@ def main():
         # if drawing mode => index finger is up
 
         # placing the menu
-        img[0:menuHeight, 0:1280] = menu
+        img[0:menuHeight, 0:menuWidth] = menu
         # =============
 
         if success is False:
