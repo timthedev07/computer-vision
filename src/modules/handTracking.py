@@ -3,6 +3,7 @@ import cv2
 import mediapipe as mp
 from src.modules.utils import checkFileType, readVideo
 from termcolor import colored
+from typing import List, Tuple
 
 if __name__ == "__main__":
     import ffmpeg
@@ -20,6 +21,7 @@ class HandDetector:
         self.mpDraw = mp.solutions.drawing_utils
         self.drawingSpec = self.mpDraw.DrawingSpec(ANNOTATION_COLOR)
         self.mpDrawingStyles = mp.solutions.drawing_styles
+        self.fingertipIds = [4, 8, 12, 16, 20]
 
     def findHands(self, img, draw=True):
         currResult = self.hands.process(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
@@ -106,6 +108,27 @@ class HandDetector:
         cv2.line(img, (x1, y1), (x2, y2), EMPHASIS_COLOR, thickness)
 
         return img
+
+    def fingersStates(self, hand: List[Tuple[int, int]]) -> Tuple[int, List[int]]:
+        rightHand = hand[5][1] > hand[17][1]
+        fingerStates = []
+
+        # edge case => the thumb
+        if hand[4][1] < hand[3][1] if rightHand else hand[4][1] > hand[3][1]:
+            fingerStates.append(0)
+        else:
+            fingerStates.append(1)
+
+        for fingertipId in self.fingertipIds[1:]:
+            if hand[fingertipId][2] < hand[fingertipId - 2][2]:
+                # current finger is up
+                fingerStates.append(1)
+            else:
+                fingerStates.append(0)
+
+        totalFingers = fingerStates.count(1)
+
+        return (totalFingers, fingerStates)
 
 
 def main():
