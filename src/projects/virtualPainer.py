@@ -38,11 +38,12 @@ def main():
             x1, y1 = hand[8][1:]
             x2, y2 = hand[12][1:]
 
-        # check which fingers are up
+            # check which fingers are up
+            fingerStates = detector.fingersStates(hand)
 
-        # if selection mode => two fingers click on an object in the menu
+            # if selection mode => two fingers click on an object in the menu
 
-        # if drawing mode => index finger is up
+            # if drawing mode => index finger is up
 
         # placing the menu
         img[0:menuHeight, 0:menuWidth] = menu
