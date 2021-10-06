@@ -109,7 +109,7 @@ class HandDetector:
 
         return img
 
-    def fingersStates(self, hand: List[Tuple[int, int]]) -> Tuple[int, List[int]]:
+    def getFingersStates(self, hand: List[Tuple[int, int]]) -> Tuple[int, List[int]]:
         rightHand = hand[5][1] > hand[17][1]
         fingerStates = []
 
