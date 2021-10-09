@@ -69,8 +69,11 @@ def main():
             # if drawing mode => index finger is up
             elif fingerStates[1] == 1 and fingerStates[2] == 0:
                 cv2.circle(img, (x1, y1), 15, color, cv2.FILLED)
+
+                # if first frame
                 if prevX == -1 and prevY == -1:
                     xp, yp = x1, y1
+
                 if color == (0, 0, 0):
                     cv2.line(img, (prevX, prevY), (x1, y1), color, penThickness + 20)
                     cv2.line(imgCanvas, (prevX, prevY), (x1, y1), color, penThickness + 20)
