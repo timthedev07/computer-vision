@@ -10,6 +10,7 @@ def main():
     menuFilenames.sort()
     penThickness = 15
     prevX, prevY = -1, -1
+    CAMERA_WIDTH, CAMERA_HEIGHT = 1280, 720
 
     menus = []
 
@@ -22,9 +23,11 @@ def main():
     detector = ht.HandDetector(minDetectionConfidence=0.85)
 
     cap = cv2.VideoCapture(0)
-    cap.set(3, 1280)
-    cap.set(4, 720)
+    cap.set(3, CAMERA_WIDTH)
+    cap.set(4, CAMERA_HEIGHT)
     color = (255, 216, 0)
+
+    imgCanvas = np.zeros((CAMERA_HEIGHT, CAMERA_WIDTH, 3), np.uint8)
 
     while True:
         success, img = cap.read()
@@ -68,7 +71,12 @@ def main():
                 cv2.circle(img, (x1, y1), 15, color, cv2.FILLED)
                 if prevX == -1 and prevY == -1:
                     xp, yp = x1, y1
-                cv2.line(img, (prevX, prevY), (x1, y1), color, penThickness)
+                if color == (0, 0, 0):
+                    cv2.line(img, (prevX, prevY), (x1, y1), color, penThickness + 20)
+                    cv2.line(imgCanvas, (prevX, prevY), (x1, y1), color, penThickness + 20)
+                else:
+                    cv2.line(img, (prevX, prevY), (x1, y1), color, penThickness)
+                    cv2.line(imgCanvas, (prevX, prevY), (x1, y1), color, penThickness)
 
         # placing the menu
         img[0:menuHeight, 0:menuWidth] = menu
