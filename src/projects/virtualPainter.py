@@ -50,6 +50,7 @@ def main():
 
             # if selection mode => two fingers click on an object in the menu
             if fingerStates[1] == 1 and fingerStates[2] == 1:
+                prevX, prevY = -1, -1
                 # checking for any clicks on the pens/eraser
                 if y1 < 140:
                     if 100 < x1 < 250:
@@ -70,9 +71,8 @@ def main():
             elif fingerStates[1] == 1 and fingerStates[2] == 0:
                 cv2.circle(img, (x1, y1), 15, color, cv2.FILLED)
 
-                # if first frame
-                if prevX == -1 and prevY == -1:
-                    xp, yp = x1, y1
+                if prevX == -1:
+                    prevX, prevY = x1, y1
 
                 if color == (0, 0, 0):
                     cv2.line(img, (prevX, prevY), (x1, y1), color, penThickness + 20)
@@ -80,9 +80,21 @@ def main():
                 else:
                     cv2.line(img, (prevX, prevY), (x1, y1), color, penThickness)
                     cv2.line(imgCanvas, (prevX, prevY), (x1, y1), color, penThickness)
+                prevX, prevY = x1, y1
 
         # placing the menu
         img[0:menuHeight, 0:menuWidth] = menu
+
+        # placing the canvas
+        imgGray = cv2.cvtColor(imgCanvas, cv2.COLOR_BGR2GRAY)
+        _, imgInv = cv2.threshold(imgGray, 50, 255, cv2.THRESH_BINARY_INV)
+        imgInv = cv2.cvtColor(imgInv, cv2.COLOR_GRAY2BGR)
+
+        img = cv2.bitwise_and(img, imgInv)
+        img = cv2.bitwise_or(img, imgCanvas)
+
+        # placing the canvas
+        # img = cv2.addWeighted(img, 0.5, imgCanvas, 0.5, 0)
         # =============
 
         if success is False:
