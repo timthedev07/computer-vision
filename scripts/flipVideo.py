@@ -33,7 +33,7 @@ def main():
 
     # store the video with no sound in the system temp folder
     bufferOutputFilename = f"{tempfile.gettempdir()}/{filename}"
-    outputVideo = cv2.VideoWriter(bufferOutputFilename, cv2.VideoWriter_fourcc(*"MP4V"), fps, frameShape)
+    outputVideo = cv2.VideoWriter(bufferOutputFilename, cv2.VideoWriter_fourcc(*"mp4v"), fps, frameShape)
     for frame in frames:
         outputVideo.write(frame)
         cv2.waitKey(1)
