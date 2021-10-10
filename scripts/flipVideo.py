@@ -9,13 +9,19 @@ from shutil import copyfile
 def main():
     if len(argv) != 2:
         print("Usage: python flipVideo.py <path>")
+    # tweaking the path
     path = os.path.normpath(argv[1])
     path = path.replace(os.sep, "/")
+    filename = path.split("/")[-1] if "/" in path else path
+
+    # read video and audio
     cap = cv2.VideoCapture(path)
     fps = cap.get(cv2.CAP_PROP_FPS)
     frames = []
     frameShape = (int(cap.get(3)), int(cap.get(4)))
-    audio = ffmpeg.input(path)
+    audioBufferPath = f"{tempfile.gettempdir()}/withAudio-{filename}"
+    copyfile(path, audioBufferPath)
+    audio = ffmpeg.input(audioBufferPath)
     while True:
         success, frame = cap.read()
         if success is False:
@@ -28,8 +34,6 @@ def main():
             break
 
     cap.release()
-
-    filename = path.split("/")[-1] if "/" in path else path
 
     # store the video with no sound in the system temp folder
     bufferOutputFilename = f"{tempfile.gettempdir()}/{filename}"
